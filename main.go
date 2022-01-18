@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -19,6 +21,7 @@ func main(){
 		fmt.Println("\tDoge-Obf.exe string")
 		fmt.Println("\tDoge-Obf.exe string hi")
 		fmt.Println("\tDoge-Obf.exe string 8\t//0-8 Num")
+		fmt.Println("\tDoge-Obf.exe str.txt hi")
 		return
 	}
 	if os.Args[1] == "-h"{
@@ -26,42 +29,71 @@ func main(){
 		fmt.Println("\tDoge-Obf.exe string")
 		fmt.Println("\tDoge-Obf.exe string hi")
 		fmt.Println("\tDoge-Obf.exe string 8\t//0-8 Num")
+		fmt.Println("\tDoge-Obf.exe str.txt hi")
 		return
 	}
 
-	b := Str2byte(os.Args[1])
-	idx := GenerateRangeNum(0,8)
-	if len(os.Args) == 3 {
-		if os.Args[2] == "hi"{
-			idx = GenerateRangeNum(4,8)
+	var obfStr []string
+	if strings.Contains(os.Args[1],".txt"){
+		obfStr,_ = readLines(os.Args[1])
+		if obfStr == nil{
+			obfStr = append(obfStr,os.Args[1])
 		}
-		i0,err := strconv.Atoi(os.Args[2])
-		if err == nil{
-			idx = i0
-		}
+	}else{
+		obfStr = append(obfStr,os.Args[1])
 	}
-	switch idx{
-	case 0:
-		b.tostring1()
-	case 1:
-		b.tostring2(false)
-	case 2:
-		b.tostring3(false)
-	case 3:
-		b.tostring4(false)
-	case 4:
-		b.tostring3(true)
-	case 5:
-		b.tostring4(true)
-	case 6:
-		b.tostring2(true)
-	case 7:
-		b.tostring5()
-	case 8:
-		b.tostring6()
+
+	for _,val := range obfStr{
+		b := Str2byte(val)
+		idx := GenerateRangeNum(0,8)
+		if len(os.Args) == 3 {
+			if os.Args[2] == "hi"{
+				idx = GenerateRangeNum(4,8)
+			}
+			i0,err := strconv.Atoi(os.Args[2])
+			if err == nil{
+				idx = i0
+			}
+		}
+		switch idx{
+		case 0:
+			b.tostring1()
+		case 1:
+			b.tostring2(false)
+		case 2:
+			b.tostring3(false)
+		case 3:
+			b.tostring4(false)
+		case 4:
+			b.tostring3(true)
+		case 5:
+			b.tostring4(true)
+		case 6:
+			b.tostring2(true)
+		case 7:
+			b.tostring5()
+		case 8:
+			b.tostring6()
+		}
 	}
 
 }
+
+func readLines(path string) ([]string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	return lines, scanner.Err()
+}
+
 
 type strByte struct{
 	rawstr string
