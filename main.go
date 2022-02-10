@@ -2,6 +2,9 @@ package main
 
 import (
 	"bufio"
+	"crypto/sha1"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"math/rand"
 	"os"
@@ -16,12 +19,14 @@ func init() {
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func main(){
+
 	if len(os.Args) == 1{
 		fmt.Println("usage:")
 		fmt.Println("\tDoge-Obf.exe string")
 		fmt.Println("\tDoge-Obf.exe string hi")
 		fmt.Println("\tDoge-Obf.exe string 8\t//0-8 Num")
 		fmt.Println("\tDoge-Obf.exe str.txt hi")
+		fmt.Println("\tDoge-Obf.exe sha str.txt")
 		return
 	}
 	if os.Args[1] == "-h"{
@@ -30,6 +35,14 @@ func main(){
 		fmt.Println("\tDoge-Obf.exe string hi")
 		fmt.Println("\tDoge-Obf.exe string 8\t//0-8 Num")
 		fmt.Println("\tDoge-Obf.exe str.txt hi")
+		fmt.Println("\tDoge-Obf.exe sha str.txt")
+		return
+	}
+	if os.Args[1] == "sha" ||os.Args[1] == "sha1"||os.Args[1] == "sha256"{
+		fmt.Println("//"+os.Args[2] + "\tsha1")
+		fmt.Println(Str2sha1(os.Args[2]))
+		fmt.Println("\n//"+os.Args[2] + "\tsha256")
+		fmt.Println(Sha256Hex(os.Args[2]))
 		return
 	}
 
@@ -311,4 +324,22 @@ func RandStringRunes(n int) string {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
 	return string(b)
+}
+
+
+func Str2sha1(s string) string {
+	h := sha1.New()
+	h.Write([]byte(s))
+	bs := h.Sum(nil)
+	return fmt.Sprintf("%x", bs)
+}
+
+func Sha256Hex(s string)string{
+	return hex.EncodeToString(Sha256([]byte(s)))
+}
+
+func Sha256(data []byte)[]byte{
+	digest:=sha256.New()
+	digest.Write(data)
+	return digest.Sum(nil)
 }
